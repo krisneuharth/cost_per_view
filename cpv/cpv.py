@@ -208,7 +208,7 @@ def calc_cpv(spend, views):
     """
 
     try:
-        cost = round(float(views / spend), 2)
+        cost = round(float(spend / views), 2)
     except ZeroDivisionError:
         cost = 0
 
