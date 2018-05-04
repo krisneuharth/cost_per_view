@@ -5,13 +5,27 @@ from datetime import datetime, time
 ROTATIONS_DATA = '../data/rotations.csv'
 SPOTS_DATA = '../data/spots.csv'
 
+DATE_FMT = "%m/%d/%Y"
+TIME_FMT = "%I:%M %p"
+DATE_TIME_FMT = " ".join(
+    [DATE_FMT, TIME_FMT]
+)
+
+
+# ASSUMPTIONS:
+#   TIMEZONE? UTC?
+#   Overlapping times for rotations
+#   12pm on the dot could be two rotations
+#   15-16:00 is two rotations?
+#   Any other time window is 'Other'
+
 
 class DefaultEncoder(json.JSONEncoder):
     def default(self, o):
-        if isinstance(o, datetime):
+        if isinstance(o, datetime) or isinstance(o, time):
             return o.isoformat()
-        if isinstance(o, time):
-            return o.isoformat()
+        if isinstance(o, list) or isinstance(o, tuple):
+            return ", ".join(o)
 
         return json.JSONEncoder.default(self, o)
 
@@ -21,44 +35,75 @@ def get_rotations_data():
         reader = csv.reader(f)
 
         # Pop the header
-        header = next(reader)
-        print(header)
+        next(reader)
 
         # Go through the rotations file,
         # pull out the name and time ranges
         rotations = {}
+        errors = []
+
         for line in reader:
-            # Time name = {Afternoon, Morning, Prime}
-            k = line[2]
+            if not all(line):
+                errors.append(line)
+                continue
 
-            # Start and end times
-            v = (
-                # String, time
-                line[0], datetime.strptime(line[0], "%I:%M %p").time(),
-                line[1], datetime.strptime(line[1], "%I:%M %p").time(),
-            )
+            # Make complex key:
+            dt_start = datetime.strptime(line[0], TIME_FMT).time()
+            dt_end = datetime.strptime(line[1], TIME_FMT).time()
 
-            # Store for lookup later
-            rotations[k] = v
+            # The rotation name
+            v = line[2]
 
-        return rotations
+            # Save the key and name, for quicker lookup later
+            for k in range(dt_start.hour, dt_end.hour + 1):
+                key = str(k)
+
+                if key in rotations:
+                    # We've seen this before
+                    values = rotations[key]
+
+                    if isinstance(values, list):
+                        values.append(v)
+
+                        # Re-save with the update
+                        rotations[key] = values
+                else:
+                    # Have not seen this before
+                    rotations[key] = [v]
+
+        return rotations, errors
 
 
-def get_spots_data():
+def get_spots_data(rotations):
     with open(SPOTS_DATA) as f:
         reader = csv.reader(f)
 
         # Pop the header
-        header = next(reader)
-        print(header)
+        next(reader)
 
         spots = []
+        errors = []
+
         for line in reader:
-            print(line)
-            # DO LOOKUP FOR TIME RANGE
+            if not all(line):
+                errors.append(line)
+                continue
+
+            # Convert strings to dt
+            dt_aired = datetime.strptime(
+                "%s %s" % (line[0], line[1]),
+                DATE_TIME_FMT
+            )
+
+            # Do the lookup for the rotation
+            rotation = rotations.get(
+                str(dt_aired.hour), ['Other']
+            )
+
+            line.append(rotation)
             spots.append(line)
 
-        return spots
+        return spots, errors
 
 
 def pprint(data):
@@ -72,11 +117,10 @@ def pprint(data):
 
 
 if __name__ == "__main__":
-    rotations = get_rotations_data()
-    pprint(rotations)
+    rotations, errors = get_rotations_data()
+    #pprint(rotations)
 
-    print('\n')
+    #print('\n')
 
-    spots = get_spots_data()
+    spots, errors = get_spots_data(rotations)
     pprint(spots)
-
