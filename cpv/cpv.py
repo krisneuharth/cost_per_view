@@ -69,7 +69,7 @@ def pprint(data):
     Log to the console, after
     converting to json and formatting
 
-    :param data:
+    :param data: Any
     :return: None
     """
 
@@ -83,6 +83,15 @@ def pprint(data):
 
 
 def get_rotations_data(meta):
+    """
+    Read up the rotations file
+    Store the rotations key by time hour ranges
+    Save the names in meta
+
+    :param meta: Metadata object
+    :return: dict, Metadata object
+    """
+
     logger.info('Reading CSV: `%s`' % ROTATIONS_DATA)
 
     with open(ROTATIONS_DATA) as f:
@@ -136,6 +145,17 @@ def get_rotations_data(meta):
 
 
 def get_spots_data(rotations, meta):
+    """
+    Read up the spots file
+    Convert them to Spot objects
+    Save some information in meta
+
+
+    :param rotations: dict
+    :param meta: Metadata
+    :return: list of Spots, Metadata
+    """
+
     logger.info('Reading CSV: `%s`' % SPOTS_DATA)
 
     with open(SPOTS_DATA) as f:
@@ -200,10 +220,10 @@ def get_spots_data(rotations, meta):
 def calc_cpv(spend, views):
     """
     Use spend and views to calculate
-    Cost Per View metric
+    the Cost Per View metric
 
-    :param spend:
-    :param views:
+    :param spend: float
+    :param views: int
     :return: float
     """
 
@@ -221,7 +241,7 @@ def filter_sum(fx, spots):
     the filter criteria
 
     :param fx: lambda
-    :param spots: list
+    :param spots: list of Spots
     :return: tuple (spend, views)
     """
 
@@ -237,7 +257,7 @@ def filter_sum(fx, spots):
 
 def cpv_by_creative(spots, meta, results):
     """
-    Take spots and calculate CPV by creative
+    Filter spots and calculate CPV by creative
 
     :param spots: list
     :param meta: Metadata object
@@ -256,7 +276,7 @@ def cpv_by_creative(spots, meta, results):
 
 def cpv_by_rotation(spots, meta, results):
     """
-    Take spots and calculate CPV by rotation
+    Filter spots and calculate CPV by rotation
 
     :param spots: list
     :param meta: Metadata object
@@ -275,7 +295,7 @@ def cpv_by_rotation(spots, meta, results):
 
 def cpv_by_day(spots, meta, results):
     """
-    Take spots and calculate CPV by day
+    Filter spots and calculate CPV by day
 
     :param spots: list
     :param meta: Metadata object
@@ -294,7 +314,7 @@ def cpv_by_day(spots, meta, results):
 
 def cpv_by_rotation_by_day(spots, meta, results):
     """
-    Take spots and calculate CPV by rotation by day
+    Filter spots and calculate CPV by rotation by day
 
     :param spots: list
     :param meta: Metadata object
@@ -316,7 +336,7 @@ def cpv_by_rotation_by_day(spots, meta, results):
 
 def cpv_by_rotation_by_creative_by_day(spots, meta, results):
     """
-    Take spots and calculate CPV by rotation by creative by day
+    Filter spots and calculate CPV by rotation by creative by day
 
     :param spots: list
     :param meta: Metadata object
@@ -339,8 +359,11 @@ def cpv_by_rotation_by_creative_by_day(spots, meta, results):
 
 def calculate(spots, meta):
     """
+    Go through spots and combine with
+    metadata in order to calculate the
+    desired CPV metric in several dimensions
 
-    :param spots: list
+    :param spots: list of Spots
     :param meta: Metadata object
     :return: results dict
     """
