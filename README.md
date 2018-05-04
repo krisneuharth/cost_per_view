@@ -28,7 +28,6 @@ Install dependencies and set path
 
 **Output**
 
-    ```json
     {
       "cpv": {
         "rotation_by_creative_by_day": {
@@ -64,6 +63,8 @@ Install dependencies and set path
     }
 
 **Running the tests**
+
+    $ nosetests
 
 **Assumptions**
 
