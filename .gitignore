@@ -10,3 +10,4 @@ cost_per_view.egg-info/top_level.txt
 cpv/__pycache__/__init__.cpython-35.pyc
 tests/__pycache__/__init__.cpython-35.pyc
 tests/__pycache__/test_tests.cpython-35.pyc
+cpv/__pycache__/cpv.cpython-35.pyc
