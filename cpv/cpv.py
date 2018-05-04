@@ -368,9 +368,12 @@ def calculate(spots, meta):
     return results
 
 
-if __name__ == "__main__":
+def main():
     """
-    Driver
+    Encapsulate all the core methods required
+    in the parsing and calculations
+
+    :return: None
     """
 
     # Neater way to pass required data around
@@ -385,3 +388,11 @@ if __name__ == "__main__":
     # Calculate!
     costs = calculate(spots, meta)
     pprint(costs)
+
+
+if __name__ == "__main__":
+    """
+    Driver
+    """
+
+    main()
