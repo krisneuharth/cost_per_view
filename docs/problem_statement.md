@@ -1,4 +1,4 @@
-# Tatari Hiring Homework
+# Statement
 
 This is a quick little homework assignment that we give to our potential
 hires.  It's mostly intended to just make sure that people can actually
