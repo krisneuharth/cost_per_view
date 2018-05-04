@@ -1,7 +1,9 @@
-import json
 import csv
+import logging
+import json
 from datetime import datetime, time
 
+# Settings
 ROTATIONS_DATA = '../data/rotations.csv'
 SPOTS_DATA = '../data/spots.csv'
 
@@ -11,13 +13,13 @@ DATE_TIME_FMT = " ".join(
     [DATE_FMT, TIME_FMT]
 )
 
+# Logging
+logging.basicConfig(
+    format='%(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-# ASSUMPTIONS:
-#   TIMEZONE? UTC?
-#   Overlapping times for rotations
-#   12pm on the dot could be two rotations
-#   15-16:00 is two rotations?
-#   Any other time window is 'Other'
+logger = logging.getLogger()
 
 
 class DefaultEncoder(json.JSONEncoder):
@@ -30,12 +32,31 @@ class DefaultEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+def pprint(data):
+    s = json.dumps(
+        data,
+        indent=2,
+        cls=DefaultEncoder
+    )
+
+    logger.info(s)
+
+# ASSUMPTIONS:
+#   TIMEZONE? UTC?
+#   Overlapping times for rotations
+#   12pm on the dot could be two rotations
+#   15-16:00 is two rotations?
+#   Any other time window is 'Other'
+
 def get_rotations_data():
+    logger.info('Reading CSV: `%s`' % ROTATIONS_DATA)
+
     with open(ROTATIONS_DATA) as f:
         reader = csv.reader(f)
 
         # Pop the header
-        next(reader)
+        header = next(reader)
+        logger.info('CSV header: %s' % header)
 
         # Go through the rotations file,
         # pull out the name and time ranges
@@ -44,14 +65,15 @@ def get_rotations_data():
 
         for line in reader:
             if not all(line):
+                logger.error('Bad line: %s' % line)
                 errors.append(line)
                 continue
 
-            # Make complex key:
+            # Get time range for this rotation
             dt_start = datetime.strptime(line[0], TIME_FMT).time()
             dt_end = datetime.strptime(line[1], TIME_FMT).time()
 
-            # The rotation name
+            # Get rotation name
             v = line[2]
 
             # Save the key and name, for quicker lookup later
@@ -75,17 +97,21 @@ def get_rotations_data():
 
 
 def get_spots_data(rotations):
+    logger.info('Reading CSV: `%s`' % SPOTS_DATA)
+
     with open(SPOTS_DATA) as f:
         reader = csv.reader(f)
 
         # Pop the header
-        next(reader)
+        header = next(reader)
+        logger.info('CSV header: %s' % header)
 
         spots = []
         errors = []
 
         for line in reader:
             if not all(line):
+                logger.error('Bad line: %s' % line)
                 errors.append(line)
                 continue
 
@@ -100,27 +126,20 @@ def get_spots_data(rotations):
                 str(dt_aired.hour), ['Other']
             )
 
+            # Add rotation name to the current line
             line.append(rotation)
+
+            # Save it
             spots.append(line)
 
         return spots, errors
 
 
-def pprint(data):
-    print(
-        json.dumps(
-            data,
-            indent=2,
-            cls=DefaultEncoder
-        )
-    )
-
-
 if __name__ == "__main__":
     rotations, errors = get_rotations_data()
-    #pprint(rotations)
+    pprint(rotations)
 
-    #print('\n')
+    print('\n')
 
     spots, errors = get_spots_data(rotations)
     pprint(spots)
