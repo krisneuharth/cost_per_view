@@ -30,34 +30,34 @@ Install dependencies and set path
 
     {
       "cpv": {
+        "rotation": {
+          "Prime": 3.45,
+          "Afternoon": 4.64,
+          "Morning": 2.59
+        },
         "rotation_by_creative_by_day": {
-          "Prime - TEST002H - 2016-01-02": 0.19,
-          "Afternoon - TEST002H - 2016-01-02": 0.19,
-          "Afternoon - TEST001H - 2016-01-02": 0.28,
-          "Prime - TEST001H - 2016-01-02": 0.28,
-          "Prime - TEST002H - 2016-02-02": 0.43,
-          "Morning - TEST001H - 2016-01-02": 0.58,
-          "Morning - TEST001H - 2016-02-02": 0.29
+          "Morning - TEST001H - 2016-02-02": 3.5,
+          "Afternoon - TEST002H - 2016-01-02": 5.29,
+          "Prime - TEST001H - 2016-01-02": 3.64,
+          "Prime - TEST002H - 2016-02-02": 2.33,
+          "Morning - TEST001H - 2016-01-02": 1.72,
+          "Afternoon - TEST001H - 2016-01-02": 3.64,
+          "Prime - TEST002H - 2016-01-02": 5.29
         },
         "creative": {
-          "TEST002H": 0.26,
-          "TEST001H": 0.34
-        },
-        "day": {
-          "2016-01-02": 0.26,
-          "2016-02-02": 0.36
+          "TEST002H": 3.91,
+          "TEST001H": 2.95
         },
         "rotation_by_day": {
-          "Prime - 2016-02-02": 0.43,
-          "Morning - 2016-01-02": 0.58,
-          "Morning - 2016-02-02": 0.29,
-          "Afternoon - 2016-01-02": 0.22,
-          "Prime - 2016-01-02": 0.22
+          "Morning - 2016-01-02": 1.72,
+          "Prime - 2016-01-02": 4.64,
+          "Afternoon - 2016-01-02": 4.64,
+          "Prime - 2016-02-02": 2.33,
+          "Morning - 2016-02-02": 3.5
         },
-        "rotation": {
-          "Morning": 0.39,
-          "Afternoon": 0.22,
-          "Prime": 0.29
+        "day": {
+          "2016-02-02": 2.8,
+          "2016-01-02": 3.85
         }
       }
     }
@@ -89,6 +89,7 @@ with multiprocessing.
 
 9) I assumed larger data sets so I built this with memory use in mind, hence the classes with slots.
 
+10) Possibly naively assumed that CPV is spend / views.
 
 
 
