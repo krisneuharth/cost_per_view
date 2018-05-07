@@ -22,7 +22,7 @@ Install dependencies and set path
 
 **Running the application**
 
-    $ cd cpv
+    $ cd cost_per_view
     $ python cpv.py
     
 
