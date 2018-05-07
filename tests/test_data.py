@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from cpv.cpv import Spot, Metadata
+from cost_per_view.data import Spot, Metadata
 
 
 class TestSpot(TestCase):

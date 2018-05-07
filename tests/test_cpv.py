@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from cpv.cpv import Spot, Metadata
+from cost_per_view.data import *
 
 
 class TestCPV(TestCase):
@@ -37,7 +37,7 @@ class TestCPV(TestCase):
         pass
 
 
-    def test_cpv_by_rotation_by_day(self)
+    def test_cpv_by_rotation_by_day(self):
         pass
 
 

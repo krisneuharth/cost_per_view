@@ -1,85 +1,13 @@
 import csv
-import logging
-import json
 
 from collections import defaultdict
-from datetime import datetime, time
+from datetime import datetime
 
 from copy import deepcopy
 
-# Settings
-ROTATIONS_DATA = '../data/rotations.csv'
-SPOTS_DATA = '../data/spots.csv'
-
-DATE_FMT = "%m/%d/%Y"
-TIME_FMT = "%I:%M %p"
-DATE_TIME_FMT = " ".join(
-    [DATE_FMT, TIME_FMT]
-)
-
-BASE_STR = " - "
-
-# Setup our results
-ROOT_KEY = 'cpv'
-CREATIVE = "creative"
-ROTATION = "rotation"
-DAY = "day"
-ROTATION_BY_DAY = "rotation_by_day"
-ROTATION_BY_CREATIVE_BY_DAY = "rotation_by_creative_by_day"
-
-# Logging
-logging.basicConfig(
-    format='%(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-logger = logging.getLogger()
-
-
-class DefaultEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime) or isinstance(o, time):
-            return o.isoformat()
-        if isinstance(o, list) or isinstance(o, tuple):
-            return ", ".join(o)
-
-        return json.JSONEncoder.default(self, o)
-
-
-class Spot(object):
-    __slots__ = ['date', 'time', 'creative', 'spend', 'views', 'rotation']
-
-    def __str__(self):
-        return json.dumps({
-            'date': self.date,
-            'time': self.time,
-            'creative': self.creative,
-            'spend': self.spend,
-            'views': self.views,
-            'rotation': self.rotation
-        })
-
-
-class Metadata(object):
-    __slots__ = ['rotations_names', 'creative_names', 'spot_days']
-
-
-def pprint(data):
-    """
-    Log to the console, after
-    converting to json and formatting
-
-    :param data: Any
-    :return: None
-    """
-
-    s = json.dumps(
-        data,
-        indent=2,
-        cls=DefaultEncoder
-    )
-
-    logger.info(s)
+from cost_per_view.data import Spot, Metadata
+from cost_per_view.settings import *
+from cost_per_view.utils import pprint
 
 
 def get_rotations_data(meta):
