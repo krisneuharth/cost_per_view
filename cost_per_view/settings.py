@@ -1,7 +1,7 @@
 import logging
 
-ROTATIONS_DATA = '../data/rotations.csv'
-SPOTS_DATA = '../data/spots.csv'
+ROTATIONS_DATA = 'data/rotations.csv'
+SPOTS_DATA = 'data/spots.csv'
 
 DATE_FMT = "%m/%d/%Y"
 TIME_FMT = "%I:%M %p"

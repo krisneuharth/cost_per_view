@@ -1,4 +1,5 @@
 import csv
+import os
 
 from collections import defaultdict
 from datetime import datetime
@@ -21,9 +22,10 @@ def get_rotations_data(meta):
     :return: dict, Metadata object
     """
 
-    logger.debug('Reading CSV: `%s`' % ROTATIONS_DATA)
+    path = os.path.abspath(ROTATIONS_DATA)
+    logger.debug('Reading CSV: `%s`' % path)
 
-    with open(ROTATIONS_DATA) as f:
+    with open(path) as f:
         reader = csv.reader(f)
 
         # Pop the header
@@ -84,9 +86,10 @@ def get_spots_data(rotations, meta):
     :return: list of Spots, Metadata
     """
 
-    logger.debug('Reading CSV: `%s`' % SPOTS_DATA)
+    path = os.path.abspath(SPOTS_DATA)
+    logger.debug('Reading CSV: `%s`' % path)
 
-    with open(SPOTS_DATA) as f:
+    with open(path) as f:
         reader = csv.reader(f)
 
         # Pop the header
