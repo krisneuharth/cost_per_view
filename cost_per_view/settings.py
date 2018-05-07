@@ -1,7 +1,15 @@
+import os
 import logging
 
-ROTATIONS_DATA = 'data/rotations.csv'
-SPOTS_DATA = 'data/spots.csv'
+DIR_PATH = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        os.path.pardir
+    )
+)
+
+ROTATIONS_FILE = os.path.join(DIR_PATH, 'data/rotations.csv')
+SPOTS_FILE = os.path.join(DIR_PATH, 'data/spots.csv')
 
 DATE_FMT = "%m/%d/%Y"
 TIME_FMT = "%I:%M %p"

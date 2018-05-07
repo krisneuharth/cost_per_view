@@ -1,15 +1,13 @@
 import csv
-import os
 
 from collections import defaultdict
-from datetime import datetime
 
 from copy import deepcopy
 
-from cost_per_view.data import Spot, Metadata
+from cost_per_view.data import *
 from cost_per_view.dimensions import *
 from cost_per_view.settings import *
-from cost_per_view.utils import pprint
+from cost_per_view.utils import *
 
 
 def get_rotations_data(meta):
@@ -22,10 +20,9 @@ def get_rotations_data(meta):
     :return: dict, Metadata object
     """
 
-    path = os.path.abspath(ROTATIONS_DATA)
-    logger.debug('Reading CSV: `%s`' % path)
+    logger.debug('Reading CSV: `%s`' % ROTATIONS_FILE)
 
-    with open(path) as f:
+    with open(ROTATIONS_FILE) as f:
         reader = csv.reader(f)
 
         # Pop the header
@@ -86,10 +83,9 @@ def get_spots_data(rotations, meta):
     :return: list of Spots, Metadata
     """
 
-    path = os.path.abspath(SPOTS_DATA)
-    logger.debug('Reading CSV: `%s`' % path)
+    logger.debug('Reading CSV: `%s`' % SPOTS_FILE)
 
-    with open(path) as f:
+    with open(SPOTS_FILE) as f:
         reader = csv.reader(f)
 
         # Pop the header
