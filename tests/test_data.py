@@ -16,7 +16,7 @@ class TestSpot(TestCase):
 
         self.assertTrue(spot.rotation == 'Morning')
 
-    def test_repr(self):
+    def test_str(self):
         spot = Spot()
         spot.date = "01/02/2016"
         spot.time = "8:30 AM"

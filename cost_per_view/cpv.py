@@ -6,6 +6,7 @@ from datetime import datetime
 from copy import deepcopy
 
 from cost_per_view.data import Spot, Metadata
+from cost_per_view.dimensions import *
 from cost_per_view.settings import *
 from cost_per_view.utils import pprint
 
@@ -14,20 +15,20 @@ def get_rotations_data(meta):
     """
     Read up the rotations file
     Store the rotations key by time hour ranges
-    Save the names in meta
+    Save the rotation names in meta
 
     :param meta: Metadata object
     :return: dict, Metadata object
     """
 
-    logger.info('Reading CSV: `%s`' % ROTATIONS_DATA)
+    logger.debug('Reading CSV: `%s`' % ROTATIONS_DATA)
 
     with open(ROTATIONS_DATA) as f:
         reader = csv.reader(f)
 
         # Pop the header
         header = next(reader)
-        logger.info('CSV header: %s' % header)
+        logger.debug('CSV header: %s' % header)
 
         # Go through the rotations file,
         # pull out the name and time ranges
@@ -75,23 +76,22 @@ def get_rotations_data(meta):
 def get_spots_data(rotations, meta):
     """
     Read up the spots file
-    Convert them to Spot objects
-    Save some information in meta
-
+    Convert lines to Spot objects
+    Save some information in meta as we go
 
     :param rotations: dict
     :param meta: Metadata
     :return: list of Spots, Metadata
     """
 
-    logger.info('Reading CSV: `%s`' % SPOTS_DATA)
+    logger.debug('Reading CSV: `%s`' % SPOTS_DATA)
 
     with open(SPOTS_DATA) as f:
         reader = csv.reader(f)
 
         # Pop the header
         header = next(reader)
-        logger.info('CSV header: %s' % header)
+        logger.debug('CSV header: %s' % header)
 
         # Things to track
         spots = []
@@ -145,144 +145,18 @@ def get_spots_data(rotations, meta):
         return spots, meta
 
 
-def calc_cpv(spend, views):
+def make_results():
     """
-    Use spend and views to calculate
-    the Cost Per View metric
+    Prepare the results dict
 
-    :param spend: float
-    :param views: int
-    :return: float
+    :return: dict
     """
 
-    try:
-        cost = round(float(spend / views), 2)
-    except ZeroDivisionError:
-        cost = 0
+    results = {ROOT_KEY: {}}
+    for key in DIMENSION_KEYS:
+        results[ROOT_KEY][key] = defaultdict(dict)
 
-    return cost
-
-
-def filter_sum(fx, spots):
-    """
-    Helper method to find spots matching
-    the filter criteria
-
-    :param fx: lambda
-    :param spots: list of Spots
-    :return: tuple (spend, views)
-    """
-
-    sum_spend = 0
-    sum_views = 0
-
-    for spot in filter(fx, spots):
-        sum_spend += float(spot.spend)
-        sum_views += float(spot.views)
-
-    return sum_spend, sum_views
-
-
-def cpv_by_creative(spots, meta, results):
-    """
-    Filter spots and calculate CPV by creative
-
-    :param spots: list
-    :param meta: Metadata object
-    :param results: dict
-    :return: None
-    """
-
-    for name in meta.creative_names:
-        fx = lambda x: x.creative == name
-        costs, views = filter_sum(fx, spots)
-        cpv = calc_cpv(costs, views)
-
-        if cpv:
-            results[ROOT_KEY][CREATIVE][name] = cpv
-
-
-def cpv_by_rotation(spots, meta, results):
-    """
-    Filter spots and calculate CPV by rotation
-
-    :param spots: list
-    :param meta: Metadata object
-    :param results: dict
-    :return: None
-    """
-
-    for rotation in meta.rotations_names:
-        fx = lambda x: x.rotation == rotation
-        costs, views = filter_sum(fx, spots)
-        cpv = calc_cpv(costs, views)
-
-        if cpv:
-            results[ROOT_KEY][ROTATION][rotation] = cpv
-
-
-def cpv_by_day(spots, meta, results):
-    """
-    Filter spots and calculate CPV by day
-
-    :param spots: list
-    :param meta: Metadata object
-    :param results: dict
-    :return: None
-    """
-
-    for day in meta.spot_days:
-        fx = lambda x: x.date == day
-        costs, views = filter_sum(fx, spots)
-        cpv = calc_cpv(costs, views)
-
-        if cpv:
-            results[ROOT_KEY][DAY][day] = cpv
-
-
-def cpv_by_rotation_by_day(spots, meta, results):
-    """
-    Filter spots and calculate CPV by rotation by day
-
-    :param spots: list
-    :param meta: Metadata object
-    :param results: dict
-    :return: None
-    """
-
-    for rotation in meta.rotations_names:
-        for day in meta.spot_days:
-            DIM_KEY = BASE_STR.join([rotation, day])
-
-            fx = lambda x: x.rotation == rotation and x.date == day
-            costs, views = filter_sum(fx, spots)
-            cpv = calc_cpv(costs, views)
-
-            if cpv:
-                results[ROOT_KEY][ROTATION_BY_DAY][DIM_KEY] = cpv
-
-
-def cpv_by_rotation_by_creative_by_day(spots, meta, results):
-    """
-    Filter spots and calculate CPV by rotation by creative by day
-
-    :param spots: list
-    :param meta: Metadata object
-    :param results: dict
-    :return: None
-    """
-
-    for rotation in meta.rotations_names:
-        for creative in meta.creative_names:
-            for day in meta.spot_days:
-                DIM_KEY = BASE_STR.join([rotation, creative, day])
-
-                fx = lambda x: x.rotation == rotation and x.creative == creative and x.date == day
-                costs, views = filter_sum(fx, spots)
-                cpv = calc_cpv(costs, views)
-
-                if cpv:
-                    results[ROOT_KEY][ROTATION_BY_CREATIVE_BY_DAY][DIM_KEY] = cpv
+    return results
 
 
 def calculate(spots, meta):
@@ -296,10 +170,8 @@ def calculate(spots, meta):
     :return: results dict
     """
 
-    # Prepare our results
-    results = {ROOT_KEY: {}}
-    for key in [CREATIVE, ROTATION, DAY, ROTATION_BY_DAY, ROTATION_BY_CREATIVE_BY_DAY]:
-        results[ROOT_KEY][key] = defaultdict(dict)
+    # Construct our result set
+    results = make_results()
 
     # 1: CPV by creative
     cpv_by_creative(spots, meta, results)

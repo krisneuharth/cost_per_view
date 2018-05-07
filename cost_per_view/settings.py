@@ -19,6 +19,12 @@ DAY = "day"
 ROTATION_BY_DAY = "rotation_by_day"
 ROTATION_BY_CREATIVE_BY_DAY = "rotation_by_creative_by_day"
 
+DIMENSION_KEYS = [
+    CREATIVE, ROTATION, DAY,
+    ROTATION_BY_DAY,
+    ROTATION_BY_CREATIVE_BY_DAY
+]
+
 # Logging
 logging.basicConfig(
     format='%(levelname)s - %(message)s',
